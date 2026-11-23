@@ -1,0 +1,74 @@
+/* ============================================================
+   Window motion in the spirit of macOS: minimise funnels into the dock (genie),
+   restore flows back out, maximise glides with a soft spring.
+   ============================================================ */
+:root {
+  --ease-spring: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.window.smooth {
+  transition:
+    left 0.56s var(--ease-spring),
+    top 0.56s var(--ease-spring),
+    width 0.56s var(--ease-spring),
+    height 0.56s var(--ease-spring),
+    border-radius 0.56s var(--ease-spring);
+  will-change: left, top, width, height;
+}
+
+.window.exiting-minimize {
+  pointer-events: none;
+  transform-origin: 50% 100%;
+  /* the genie itself is played from WindowFrame (lib/genie.ts) so it can aim at the real dock icon */
+}
+.window.restoring {
+  transform-origin: 50% 100%;
+  /* see lib/genie.ts */
+}
+
+@keyframes genie-minimize {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1, 1);
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  }
+  45% {
+    opacity: 1;
+    transform: translate(calc(var(--dock-dx, 0px) * 0.3), calc(var(--dock-dy, 300px) * 0.28))
+      scale(0.9, 0.86);
+    clip-path: polygon(0 0, 100% 0, 80% 100%, 20% 100%);
+  }
+  100% {
+    opacity: 0.1;
+    transform: translate(var(--dock-dx, 0px), var(--dock-dy, 300px)) scale(0.14, 0.05);
+    clip-path: polygon(0 0, 100% 0, 54% 100%, 46% 100%);
+  }
+}
+@keyframes genie-restore {
+  0% {
+    opacity: 0.1;
+    transform: translate(var(--dock-dx, 0px), var(--dock-dy, 300px)) scale(0.14, 0.05);
+    clip-path: polygon(0 0, 100% 0, 54% 100%, 46% 100%);
+  }
+  55% {
+    opacity: 1;
+    transform: translate(calc(var(--dock-dx, 0px) * 0.25), calc(var(--dock-dy, 300px) * 0.22))
+      scale(0.92, 0.9);
+    clip-path: polygon(0 0, 100% 0, 82% 100%, 18% 100%);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1, 1);
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .window.exiting-minimize,
+  .window.restoring {
+    animation: none;
+  }
+  .window.smooth {
+    transition: none;
+  }
+}

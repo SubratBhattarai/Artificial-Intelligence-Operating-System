@@ -1,0 +1,250 @@
+/* ============================================================
+   Light theme. Applied with <html data-theme="light">; loaded last so it overrides the dark layers.
+   ============================================================ */
+
+html[data-theme='light'] {
+  --bg-0: #eef1f6;
+  --bg-1: #e3e8f0;
+  --panel: rgba(255, 255, 255, 0.66);
+  --panel-solid: #ffffff;
+  --line: rgba(15, 23, 42, 0.14);
+  --line-strong: rgba(15, 23, 42, 0.32);
+  --text: #0f172a;
+  --muted: #566074;
+  --accent: #0f172a;
+  --accent-2: #334155;
+  --ok: #1f2937;
+  --warn: #8a5a00;
+  --danger: #c62839;
+  --frost: rgba(255, 255, 255, 0.66);
+  --frost-strong: rgba(255, 255, 255, 0.84);
+  --glow-soft: 0 0 0 1px rgba(15, 23, 42, 0.2), 0 0 22px rgba(15, 23, 42, 0.1);
+  --glow: 0 0 16px rgba(15, 23, 42, 0.14);
+}
+html[data-theme='light'] body {
+  color: var(--text);
+  background: var(--bg-0);
+}
+html[data-theme='light'] .wallpaper {
+  background: radial-gradient(120% 90% at 50% 38%, #fbfcfe 0%, #e9edf4 60%, #dde3ed 100%);
+}
+/* the orb keeps its hues but flips light/dark so it reads on a pale background */
+html[data-theme='light'] .voice-bg {
+  filter: invert(1) hue-rotate(180deg) saturate(0.85);
+}
+html[data-theme='light'] .desktop::after {
+  background: radial-gradient(120% 100% at 50% 40%, transparent 55%, rgba(15, 23, 42, 0.1) 100%);
+}
+
+html[data-theme='light'] .top-bar {
+  background: rgba(255, 255, 255, 0.6);
+  border-bottom: 1px solid var(--line);
+  color: var(--text);
+}
+html[data-theme='light'] .jarvis-pill,
+html[data-theme='light'] .status-pill {
+  background: rgba(15, 23, 42, 0.05);
+  border-color: var(--line);
+  color: var(--text);
+}
+
+html[data-theme='light'] .window,
+html[data-theme='light'] .system-widget,
+html[data-theme='light'] .jarvis,
+html[data-theme='light'] .launcher {
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.82), rgba(240, 243, 249, 0.8) 70%);
+  border: 1px solid rgba(15, 23, 42, 0.16);
+  color: var(--text);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 12px 30px rgba(15, 23, 42, 0.14),
+    0 32px 70px rgba(15, 23, 42, 0.12);
+}
+html[data-theme='light'] .window.active {
+  border-color: rgba(15, 23, 42, 0.34);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 16px 36px rgba(15, 23, 42, 0.18),
+    0 40px 90px rgba(15, 23, 42, 0.16);
+}
+html[data-theme='light'] .titlebar {
+  border-bottom: 1px solid var(--line);
+}
+html[data-theme='light'] .wc {
+  color: var(--text);
+  background: rgba(15, 23, 42, 0.06);
+  border-color: var(--line);
+}
+html[data-theme='light'] .wc:hover {
+  background: rgba(15, 23, 42, 0.14);
+}
+
+html[data-theme='light'] .dock {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(236, 240, 247, 0.82));
+  border: 1px solid rgba(15, 23, 42, 0.16);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 18px 44px rgba(15, 23, 42, 0.18);
+}
+html[data-theme='light'] .dock-search {
+  background: rgba(15, 23, 42, 0.06);
+  border-color: var(--line);
+  color: var(--muted);
+}
+html[data-theme='light'] .dock-search:hover {
+  color: var(--text);
+}
+html[data-theme='light'] .dock-item {
+  color: var(--text);
+}
+html[data-theme='light'] .dock-item:hover {
+  background: rgba(15, 23, 42, 0.08);
+  border-color: rgba(15, 23, 42, 0.18);
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.16);
+}
+html[data-theme='light'] .dock-item.running .dock-dot {
+  background: var(--text);
+  box-shadow: none;
+}
+html[data-theme='light'] .dock-sep {
+  background: var(--line);
+}
+html[data-theme='light'] .dock-tray,
+html[data-theme='light'] .tray-clock {
+  color: var(--text);
+}
+
+html[data-theme='light'] .desktop-icon-glyph {
+  color: var(--text);
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.95), rgba(235, 239, 246, 0.85));
+  border: 1px solid rgba(15, 23, 42, 0.16);
+  box-shadow:
+    inset 0 1px 0 #fff,
+    0 8px 18px rgba(15, 23, 42, 0.16);
+}
+html[data-theme='light'] .desktop-icon:hover .desktop-icon-glyph {
+  border-color: rgba(15, 23, 42, 0.4);
+  box-shadow:
+    inset 0 1px 0 #fff,
+    0 10px 22px rgba(15, 23, 42, 0.2);
+}
+html[data-theme='light'] .desktop-icon.selected {
+  background: rgba(15, 23, 42, 0.08);
+  border-color: rgba(15, 23, 42, 0.18);
+}
+html[data-theme='light'] .desktop-icon-label {
+  color: var(--text);
+  text-shadow: 0 1px 4px rgba(255, 255, 255, 0.9);
+}
+html[data-theme='light'] .hint-bar {
+  color: var(--muted);
+}
+
+html[data-theme='light'] .btn {
+  background: rgba(15, 23, 42, 0.05);
+  border-color: var(--line);
+  color: var(--text);
+}
+html[data-theme='light'] .btn:hover:not(:disabled) {
+  background: rgba(15, 23, 42, 0.1);
+}
+html[data-theme='light'] .btn.primary {
+  background: #0f172a;
+  border-color: #0f172a;
+  color: #fff;
+}
+html[data-theme='light'] .btn.danger {
+  background: rgba(198, 40, 57, 0.1);
+  border-color: rgba(198, 40, 57, 0.4);
+  color: var(--danger);
+}
+html[data-theme='light'] .input,
+html[data-theme='light'] .select,
+html[data-theme='light'] .jarvis-input {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: var(--line);
+  color: var(--text);
+}
+html[data-theme='light'] .card,
+html[data-theme='light'] .stat,
+html[data-theme='light'] .mem-item,
+html[data-theme='light'] .result,
+html[data-theme='light'] .source,
+html[data-theme='light'] .answer,
+html[data-theme='light'] .stat-card,
+html[data-theme='light'] .meter,
+html[data-theme='light'] .audit-row,
+html[data-theme='light'] .approval-card {
+  background: rgba(255, 255, 255, 0.6);
+  border-color: var(--line);
+  color: var(--text);
+}
+html[data-theme='light'] .tab.active {
+  color: var(--text);
+  border-bottom-color: var(--text);
+  text-shadow: none;
+}
+html[data-theme='light'] .list-row:hover,
+html[data-theme='light'] .side-item:hover,
+html[data-theme='light'] .tab:hover {
+  background: rgba(15, 23, 42, 0.06);
+}
+html[data-theme='light'] .finder-side,
+html[data-theme='light'] .finder-preview,
+html[data-theme='light'] .search-preview,
+html[data-theme='light'] .ask-preview,
+html[data-theme='light'] .notes-side {
+  background: rgba(15, 23, 42, 0.04);
+}
+html[data-theme='light'] .msg.user .msg-content {
+  background: rgba(15, 23, 42, 0.1);
+}
+html[data-theme='light'] .msg.assistant .msg-content {
+  background: rgba(15, 23, 42, 0.04);
+}
+html[data-theme='light'] .bar,
+html[data-theme='light'] .core,
+html[data-theme='light'] .metric-bar {
+  background: rgba(15, 23, 42, 0.1);
+}
+html[data-theme='light'] .bar i,
+html[data-theme='light'] .core i,
+html[data-theme='light'] .metric-bar span {
+  background: linear-gradient(90deg, #475569, #0f172a);
+}
+html[data-theme='light'] .cal-day {
+  background: rgba(15, 23, 42, 0.04);
+}
+html[data-theme='light'] .cal-day:hover {
+  background: rgba(15, 23, 42, 0.1);
+}
+html[data-theme='light'] .cal-day.selected {
+  background: rgba(15, 23, 42, 0.14);
+  border-color: var(--text);
+}
+html[data-theme='light'] .cal-day.today {
+  border-color: rgba(15, 23, 42, 0.5);
+}
+html[data-theme='light'] .cal-dot {
+  background: var(--text);
+  color: #fff;
+}
+html[data-theme='light'] .spark {
+  color: #0f172a;
+}
+html[data-theme='light'] ::-webkit-scrollbar-thumb {
+  background: rgba(15, 23, 42, 0.25);
+}
+html[data-theme='light'] ::-webkit-scrollbar-thumb:hover {
+  background: rgba(15, 23, 42, 0.4);
+}
+html[data-theme='light'] .hud-bar,
+html[data-theme='light'] .hud-reply,
+html[data-theme='light'] .hud-type {
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: 0 14px 40px rgba(15, 23, 42, 0.16);
+}
+html[data-theme='light'] .cursor-glow {
+  opacity: 0.35;
+  mix-blend-mode: multiply;
+}

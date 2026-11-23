@@ -1,0 +1,401 @@
+/* ============================================================
+   AI OS — depth layer. Layered glass, bevels and soft shadows
+   give a 3D feel with only transform/opacity animation and no
+   backdrop-filter (the biggest GPU-memory cost) or WebGL.
+   Loaded after hud.css.
+   ============================================================ */
+
+:root {
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.55, 0, 0.9, 0.4);
+  --bevel-top: inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  --bevel-bottom: inset 0 -1px 0 rgba(0, 0, 0, 0.5);
+  --depth-1: 0 2px 6px rgba(0, 0, 0, 0.45), 0 8px 18px rgba(0, 0, 0, 0.35);
+  --depth-2: 0 10px 22px rgba(0, 0, 0, 0.5), 0 28px 60px rgba(0, 0, 0, 0.5);
+  --shadow: var(--depth-2);
+}
+
+/* ---------- wallpaper with parallax depth ---------- */
+
+.wallpaper {
+  --px: 0;
+  --py: 0;
+  background:
+    radial-gradient(1000px 640px at 50% 48%, rgba(235, 240, 248, 0.11), transparent 66%),
+    radial-gradient(900px 600px at 88% -8%, rgba(255, 179, 71, 0.08), transparent 62%),
+    radial-gradient(800px 500px at 4% 108%, rgba(120, 100, 255, 0.1), transparent 64%),
+    linear-gradient(170deg, #081426, #02050b 78%);
+}
+.wallpaper::before {
+  translate: calc(var(--px) * -14px) calc(var(--py) * -10px);
+}
+.wallpaper::after {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 56px 56px;
+  translate: calc(var(--px) * 8px) calc(var(--py) * 6px);
+  inset: -20px;
+}
+
+/* ---------- windows: floating glass slabs ---------- */
+
+.window-layer {
+  perspective: 1400px;
+  perspective-origin: 50% 40%;
+}
+.window {
+  backdrop-filter: none;
+  background:
+    linear-gradient(165deg, rgba(22, 40, 66, 0.97), rgba(7, 14, 27, 0.985) 62%), var(--panel-solid);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 14px;
+  box-shadow: var(--bevel-top), var(--bevel-bottom), var(--depth-1);
+  transform-origin: 50% 60%;
+  animation: win-in 0.34s var(--ease-out) both;
+}
+.window.active {
+  border-color: rgba(235, 240, 248, 0.34);
+  box-shadow:
+    var(--bevel-top),
+    var(--bevel-bottom),
+    0 0 0 1px rgba(235, 240, 248, 0.07),
+    var(--depth-2),
+    0 0 40px rgba(235, 240, 248, 0.1);
+}
+.window.maximized {
+  border-radius: 0;
+  border-left: 0;
+  border-right: 0;
+}
+/* The window's own shine: a soft diagonal highlight across the top */
+.window::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 90px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), transparent);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.titlebar {
+  position: relative;
+  z-index: 2;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.015));
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: var(--bevel-top);
+}
+.titlebar-title {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.window-body {
+  position: relative;
+  z-index: 0;
+}
+
+/* Smooth maximise / restore: transitions are only enabled for a moment so dragging stays instant */
+.window.smooth {
+  transition:
+    left 0.3s var(--ease-out),
+    top 0.3s var(--ease-out),
+    width 0.3s var(--ease-out),
+    height 0.3s var(--ease-out),
+    border-radius 0.3s var(--ease-out);
+}
+
+/* Close: the slab tilts back and dissolves */
+.window.exiting-close {
+  pointer-events: none;
+  animation: win-close 0.22s var(--ease-in) forwards;
+}
+/* Minimise: it shrinks and flies down into the dock */
+.window.exiting-minimize {
+  pointer-events: none;
+  transform-origin: 50% 50%;
+  animation: win-minimize 0.22s var(--ease-in) forwards;
+}
+
+@keyframes win-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px) rotateX(7deg) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes win-close {
+  to {
+    opacity: 0;
+    transform: translateY(-6px) rotateX(-6deg) scale(0.92);
+  }
+}
+@keyframes win-minimize {
+  to {
+    opacity: 0;
+    transform: translate(var(--dock-dx, 0), var(--dock-dy, 300px)) scale(0.12);
+  }
+}
+
+/* ---------- window controls: round glass gems ---------- */
+
+.window-controls {
+  gap: 7px;
+  padding-right: 4px;
+}
+.wc {
+  position: relative;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: radial-gradient(
+    circle at 35% 28%,
+    rgba(255, 255, 255, 0.26),
+    rgba(255, 255, 255, 0.04) 70%
+  );
+  box-shadow:
+    var(--bevel-top),
+    0 2px 5px rgba(0, 0, 0, 0.5);
+  color: #cfe9fb;
+  transition:
+    transform 0.18s var(--ease-out),
+    background 0.18s,
+    box-shadow 0.18s;
+}
+.wc svg {
+  transition: transform 0.22s var(--ease-out);
+}
+.wc:hover {
+  transform: translateY(-1px) scale(1.12);
+  background: radial-gradient(
+    circle at 35% 28%,
+    rgba(255, 255, 255, 0.4),
+    rgba(235, 240, 248, 0.22) 72%
+  );
+  box-shadow:
+    var(--bevel-top),
+    0 4px 10px rgba(0, 0, 0, 0.55),
+    0 0 12px rgba(235, 240, 248, 0.45);
+  color: #fff;
+}
+.wc:active {
+  transform: scale(0.92);
+}
+.wc:hover svg {
+  transform: scale(1.12);
+}
+.wc.close:hover {
+  background: radial-gradient(circle at 35% 28%, rgba(255, 190, 200, 0.7), #ff5d73 72%);
+  box-shadow:
+    var(--bevel-top),
+    0 4px 10px rgba(0, 0, 0, 0.55),
+    0 0 14px rgba(255, 93, 115, 0.65);
+}
+.wc.close:hover svg {
+  transform: rotate(90deg) scale(1.12);
+}
+
+/* ---------- top bar & dock: raised glass ---------- */
+
+.top-bar {
+  backdrop-filter: none;
+  background: linear-gradient(180deg, rgba(10, 22, 40, 0.96), rgba(4, 9, 18, 0.94));
+  box-shadow:
+    var(--bevel-top),
+    0 6px 18px rgba(0, 0, 0, 0.45);
+}
+.brand-mark {
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff, var(--accent) 38%, #5a6372 100%);
+  box-shadow: 0 0 12px rgba(235, 240, 248, 0.75);
+}
+.jarvis-pill,
+.status-pill {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.015));
+  box-shadow: var(--bevel-top);
+}
+.jarvis-pill {
+  transition:
+    transform 0.18s var(--ease-out),
+    box-shadow 0.18s;
+}
+.jarvis-pill:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    var(--bevel-top),
+    0 0 14px rgba(235, 240, 248, 0.4);
+}
+
+.dock {
+  backdrop-filter: none;
+  padding: 9px 14px;
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgba(24, 44, 72, 0.9), rgba(6, 13, 25, 0.95));
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: var(--bevel-top), var(--bevel-bottom), var(--depth-2);
+}
+.dock::after {
+  /* faint floor reflection */
+  content: '';
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  bottom: -12px;
+  height: 10px;
+  background: radial-gradient(ellipse at center, rgba(235, 240, 248, 0.25), transparent 70%);
+  filter: blur(4px);
+  pointer-events: none;
+}
+.dock-item {
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.025));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    var(--bevel-top),
+    0 4px 8px rgba(0, 0, 0, 0.45);
+  transition:
+    transform 0.22s var(--ease-out),
+    box-shadow 0.22s,
+    background 0.2s;
+}
+.dock-item:hover {
+  transform: translateY(-8px) scale(1.14);
+  box-shadow:
+    var(--bevel-top),
+    0 14px 18px rgba(0, 0, 0, 0.5),
+    0 0 18px rgba(235, 240, 248, 0.3);
+}
+.dock-item:active {
+  transform: translateY(-3px) scale(1.04);
+}
+.dock-item.running .dock-dot {
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+}
+
+.desktop-icon {
+  transition:
+    transform 0.2s var(--ease-out),
+    background 0.2s;
+}
+.desktop-icon:hover {
+  transform: translateY(-3px);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.02));
+}
+.desktop-icon-glyph {
+  filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 8px rgba(235, 240, 248, 0.35));
+}
+
+/* ---------- cards, buttons, inputs: tactile depth ---------- */
+
+.card,
+.stat,
+.mem-item,
+.result,
+.source,
+.answer {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.012));
+  box-shadow:
+    var(--bevel-top),
+    0 6px 16px rgba(0, 0, 0, 0.28);
+}
+.btn {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.02));
+  box-shadow:
+    var(--bevel-top),
+    0 2px 5px rgba(0, 0, 0, 0.4);
+  transition:
+    transform 0.14s var(--ease-out),
+    box-shadow 0.18s,
+    border-color 0.18s;
+}
+.btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+.btn:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+.btn.primary {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.26), rgba(255, 255, 255, 0.08));
+}
+.input,
+.select,
+.jarvis-input {
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+.tab {
+  transition:
+    color 0.18s,
+    text-shadow 0.18s;
+}
+
+/* ---------- JARVIS panel: floating slab that rises in ---------- */
+
+.jarvis-scrim {
+  perspective: 1200px;
+}
+.jarvis {
+  animation: jarvis-in 0.42s var(--ease-out) both;
+  background: linear-gradient(165deg, rgba(20, 38, 64, 0.97), rgba(5, 11, 22, 0.985) 64%);
+  box-shadow:
+    var(--bevel-top),
+    var(--bevel-bottom),
+    var(--depth-2),
+    0 0 60px rgba(235, 240, 248, 0.12);
+}
+.jarvis.listening {
+  box-shadow:
+    var(--bevel-top),
+    var(--depth-2),
+    0 0 60px rgba(255, 93, 115, 0.25);
+}
+@keyframes jarvis-in {
+  from {
+    opacity: 0;
+    transform: translateY(26px) rotateX(9deg) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.jarvis-empty .orb {
+  margin-bottom: 18px;
+  filter: drop-shadow(0 18px 18px rgba(0, 0, 0, 0.55));
+}
+
+.msg {
+  animation: msg-in 0.28s var(--ease-out) both;
+}
+@keyframes msg-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---------- reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .window,
+  .jarvis,
+  .msg,
+  .window.exiting-close,
+  .window.exiting-minimize {
+    animation: none !important;
+  }
+  .window.smooth {
+    transition: none;
+  }
+}
